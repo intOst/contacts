@@ -1,0 +1,40 @@
+<div class="container">
+    <div class="row p-2">
+
+        <div class="col-6">
+            <div class="card-info">
+                <div class="h4 text-center">
+                    {{ text_info }}
+                </div>
+                <div>
+                    <span>{{ text_name }}:</span>
+                    <span>{{ contact.name }}</span>
+                </div>
+                <div>
+                    <span>{{ text_surname }}:</span>
+                    <span>{{ contact.surname }}</span>
+                </div>
+                <div>
+                    <span>{{ text_mail }}:</span>
+                    <span>{{ contact.mail }}</span>
+                </div>
+                <div>
+                    <span>{{ text_birthday }}:</span>
+                    <span>{{ contact.birthday |date("d.m.Y") }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card-numbers h-100">
+                <div class="h4 text-center">{{ text_numbers }}</div>
+                {% if contact.numbers %}
+                    {% for number in contact.numbers %}
+                        <div>{{ loop.index }}. {{ number.number }}</div>
+                    {% endfor %}
+                {% else %}
+                    {{ text_empty }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

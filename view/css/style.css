@@ -1,0 +1,31 @@
+.header-titles,.footer{
+    background-color: #0c5460;
+    color: #fff;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+.card-info,.card-numbers,.header-titles,.footer{
+    border-radius: 25px;
+}
+
+.footer{
+    padding: 10px;
+}
+.card-info,.card-numbers{
+    background-color: #0b91d2;
+    color: #fff;
+    padding: 50px;
+}
+.breadcrumbs a{
+    color: #fff;
+}
+.breadcrumbs{
+    padding-top: 15px;
+}
+.breadcrumbs span.active{
+    text-decoration: underline;
+}
+label.required:after{
+    color: red;
+    content: '*';
+}

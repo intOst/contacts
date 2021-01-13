@@ -1,0 +1,159 @@
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <div class="card-info h-100">
+                <form id="form-info">
+                    {% if contact.id %}
+                    <input type="hidden" name="id" value="{{ contact.id }}">
+                    {% endif %}
+                    <div class="h4 text-center">
+                        {{ text_info }}
+                    </div>
+                    <div class="form-group">
+                        <label class="required" for="name">{{ text_name }}</label>
+                        <input type="text" name="name" class="form-control" value="{% if contact.name %}{{ contact.name }}{% endif %}" placeholder="{{ text_name }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="surname">{{ text_surname }}</label>
+                        <input type="text" name="surname" class="form-control" value="{% if contact.surname %}{{ contact.surname }}{% endif %}" placeholder="{{ text_surname }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="mail">{{ text_mail }}</label>
+                        <input type="text" name="mail" class="form-control" value="{% if contact.mail %}{{ contact.mail }}{% endif %}" placeholder="{{ text_mail }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="birthday">{{ text_birthday }}</label>
+                        <input type="text" name="birthday" class="form-control" id="birthday">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card-numbers h-100">
+                <form id="form-numbers">
+                    <div class="h4 text-center">{{ text_numbers }}</div>
+                    {% if  contact.numbers %}
+                        {% for number in contact.numbers %}
+                            <div class="input-group m-2">
+                                <input type="text" name="numbers[]" value="{{ number.number }}" class="form-control" placeholder="{{ text_number }}">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-danger removeNumber" type="button"><i class="fas fa-trash"></i></button>
+                                </span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="input-group m-2">
+                            <input type="text" name="numbers[]" class="form-control" placeholder="{{ text_number }}">
+                            <span class="input-group-btn">
+                            <button class="btn btn-danger removeNumber" type="button"><i class="fas fa-trash"></i></button>
+                        </span>
+                        </div>
+                    {% endif %}
+                    <div class="text-center">
+                        <span class="btn btn-info m-2 w-50" id="addNewNumber">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-12 text-center">
+            <button class="btn btn-lg btn-info m-2" id="buttonSend">{{ text_save }}</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('body').on('click','#addNewNumber',function () {
+            html = '<div class="input-group m-2">';
+            html += '<input type="text" name="numbers[]" class="form-control" placeholder="{{ text_number }}">';
+            html += '<span class="input-group-btn">';
+            html += '<button class="btn btn-danger removeNumber" type="button"><i class="fas fa-trash"></i></button>';
+            html += '</span>';
+            html += '</div>';
+
+            $('.card-numbers').find('.input-group:last').after(html);
+        });
+
+        $('body').on('click','#buttonSend',function () {
+            var info = $('#form-info').serialize();
+            var numbers = $('#form-numbers').serialize();
+            var data = new FormData();
+            $.ajax({
+                url: '{% if contact %}{{ edit }}{% else %}{{ add }}{% endif %}',
+                type: 'post',
+                data: info+'&'+numbers,
+                dataType: 'json',
+                beforeSend: function() {
+                    $(this).button('loading');
+                },
+                complete: function() {
+                    $(this).button('reset');
+                },
+                success: function(json) {
+                    console.log(json);
+                    if(json['error']){
+                        Swal.fire({
+                            icon: 'error',
+                            title: '{{ text_error }}',
+                            text: json['error'],
+                        })
+                    }
+                    if(json['location']){
+                        window.location = json['location'];
+                    }
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                }
+            });
+
+        });
+
+        $('body').on('click','.removeNumber',function () {
+            var count_numbers = $(this).closest('.card-numbers').find('.input-group').length;
+            if(count_numbers > 1){
+                $(this).closest('.input-group').remove();
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: '{{ text_error }}',
+                    text: '{{ text_error_require_number }}',
+                })
+            }
+        });
+
+
+        (function($){
+            $.fn.datepicker.dates['ru'] = {
+                days: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
+                daysShort: ["Вск", "Пнд", "Втр", "Срд", "Чтв", "Птн", "Суб"],
+                daysMin: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+                months: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
+                monthsShort: ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"],
+                today: "Сегодня",
+                clear: "Очистить",
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                monthsTitle: 'Месяцы'
+            };
+        }(jQuery));
+
+        $('#birthday').datepicker({
+            weekStart: 1,
+            daysOfWeekHighlighted: "6,0",
+            autoclose: true,
+            todayHighlight: true,
+            format: 'dd.mm.yyyy',
+            endDate: '-18y',
+            language: 'ru',
+            startView: 'years'
+        });
+
+        {% if contact.birthday %}
+        $('#birthday').datepicker('setDate','{{ contact.birthday }}');
+        {% endif %}
+
+    });
+</script>

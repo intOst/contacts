@@ -17,10 +17,10 @@ define('DIR_LANGUAGE', '/home/va393251/intost.space/allpos/language/');
 
 // DB
 define('DB_DRIVER', 'mysqli');
-define('DB_HOSTNAME', 'va393251.mysql.tools');
-define('DB_USERNAME', 'va393251_allpos');
-define('DB_PASSWORD', '36+~kyB5dG');
-define('DB_DATABASE', 'va393251_allpos');
+define('DB_HOSTNAME', '*');
+define('DB_USERNAME', '*');
+define('DB_PASSWORD', '*');
+define('DB_DATABASE', '*');
 define('DB_PORT', '3306');
 
 define('DB_PREFIX', 'q_');

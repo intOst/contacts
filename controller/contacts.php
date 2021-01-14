@@ -4,8 +4,12 @@ class ControllerContacts extends Controller {
     private $model;
     private $data = array();
 
+    public function __construct($registry) {
+        parent::__construct($registry);
+        $this->loads();
+    }
+
 	public function index() {
-	    $this->loads();
 
 	    $filter_data = array(
 	        'name' => false,
@@ -44,7 +48,6 @@ class ControllerContacts extends Controller {
     public function view(){
 	    if($this->registry->get('id')){
 	        $id = $this->registry->get('id');
-            $this->loads();
             $this->data['title'] = $this->data['text_project'];
             $this->data['contact'] = $this->model->getContact($id);
             $this->data['sub_title'] = "Контакт - " . $this->data['contact']['name'];
@@ -65,7 +68,6 @@ class ControllerContacts extends Controller {
     }
 
     public function add(){
-        $this->loads();
 
 	    if(isset($_POST) && !empty($_POST)){
 	        $data = $_POST;
@@ -94,7 +96,6 @@ class ControllerContacts extends Controller {
     }
 
 	public function edit() {
-        $this->loads();
 
         if(isset($_POST) && !empty($_POST)){
             $data = $_POST;
@@ -137,7 +138,6 @@ class ControllerContacts extends Controller {
     public function remove() {
         if($this->registry->get('id')){
             $id = $this->registry->get('id');
-            $this->loads();
             $this->model->removeContact($id);
         }
         header("Location: ".$this->registry->get('base_page'));
